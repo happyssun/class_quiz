@@ -1,10 +1,10 @@
 import { ApolloQueryResult, gql, useQuery } from "@apollo/client";
 import styled from "@emotion/styled";
-import PagiNation from "../../src/components/commons/pagination";
+import PagiNation from "../../../src/components/commons/pagination";
 import {
   Query,
   QueryFetchBoardArgs,
-} from "../../src/commons/types/generated/types";
+} from "../../../src/commons/types/generated/types";
 
 const FETCH_BOARDS = gql`
   query fetchBoards($page: Int) {

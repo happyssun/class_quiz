@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { getDate } from "../../src/components/commons/libraries/utils";
+import { getDate } from "../../../src/components/commons/libraries/utils";
 const FETCH_BOARDS = gql`
   query fetchBoards($page: Int) {
     fetchBoards(page: $page) {
