@@ -43,7 +43,6 @@ export default class Page extends Component {
     Router.push("/");
   }
 
-  
   render() {
     return (
       <>
