@@ -34,7 +34,7 @@ export default class Page extends Component {
   */
   // 2. 버튼을 누를때마다 상태 변경
   onClickEdit = () => {
-    this.setState((prevState) => ({
+    this.setState((prevState: { isChange: boolean }) => ({
       isChange: !prevState.isChange, // 이전 값의 반대로 변경
     }));
   };
