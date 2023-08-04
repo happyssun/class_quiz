@@ -2,12 +2,6 @@ import { UploadOutlined } from "@ant-design/icons";
 import { gql, useMutation } from "@apollo/client";
 import { Button, Image, Input, Modal } from "antd";
 import { ChangeEvent, useRef, useState } from "react";
-import {
-  Mutation,
-  MutationCreateBoardArgs,
-  MutationUploadFileArgs,
-} from "../../../src/commons/types/generated/types";
-import { useRouter } from "next/router";
 
 const CREATE_BOARD = gql`
   mutation createBoard($createboardInput: CreateBoardInput!) {
@@ -30,24 +24,16 @@ const UPLOAD_FILE = gql`
 `;
 
 export default function ImageUpload() {
-  const [createBoard] = useMutation<
-    Pick<Mutation, "createBoard">,
-    MutationCreateBoardArgs
-  >(CREATE_BOARD);
-
-  const [uploadFile] = useMutation<
-    Pick<Mutation, "uploadFile">,
-    MutationUploadFileArgs
-  >(UPLOAD_FILE);
+  const [createBoard] = useMutation(CREATE_BOARD);
+  const [uploadFile] = useMutation(UPLOAD_FILE);
 
   const [writer, setWriter] = useState("");
   const [pw, setPw] = useState("");
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const router = useRouter;
 
-  const imageRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef(null); // useRef to create a ref
 
   const onChangeWriter = (e: ChangeEvent<HTMLInputElement>) => {
     setWriter(e.currentTarget.value);
@@ -71,41 +57,41 @@ export default function ImageUpload() {
           file,
         },
       });
-      setImageUrl(result.data?.uploadFile.url ?? "");
-    } catch {
+      setImageUrl(result.data?.uploadFile.url ?? null);
+    } catch (error) {
       Modal.error({ content: error.message });
     }
   };
 
   const onClickSubmit = async () => {
     if (writer && pw && title && contents) {
-      try {
-        const result = await createBoard({
-          variables: {
-            createBoardInput: {
-              writer,
-              password: pw,
-              title,
-              contents,
-              images: [imageUrl],
-            },
+      const result = await createBoard({
+        variables: {
+          createboardInput: {
+            writer,
+            password: pw,
+            title,
+            contents,
+            images: imageUrl ? [imageUrl] : [],
           },
-        });
-        alert(result.data.createBoard.message);
+        },
+      });
+      if (result.data?.createBoard) {
         alert("저장되었습니다!");
-        router.push("/");
-      } catch (error) {
-        if (error instanceof Error) Modal.error({ content: error.message });
+      } else {
+        alert("저장에 실패했습니다!");
       }
+    } else {
+      alert("모든 필드를 입력하세요!");
     }
   };
 
   const onClickImage = () => {
-    void imageRef.current?.click();
+    void imageRef.current.click();
   };
 
   return (
-    <>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       작성자:
       <Input type="text" onChange={onChangeWriter} />
       비밀번호:
@@ -114,15 +100,9 @@ export default function ImageUpload() {
       <Input type="text" onChange={onChangeTitle} />
       내용:
       <Input type="text" onChange={onChangeContents} />
-      <input
-        type="file"
-        onChange={onChangeImage}
-        style={{ display: "none" }}
-        ref={imageRef}
-      />
       {imageUrl && (
         <Image
-          src={imageUrl ? `https://storage.googleapis.com/${imageUrl}` : ""}
+          src={`https://storage.googleapis.com/${imageUrl}`}
           style={{
             width: "50px",
             height: "50px",
@@ -130,22 +110,26 @@ export default function ImageUpload() {
           }}
         />
       )}
-      <div
-        style={{
-          display: "flex",
-          margin: "20px 0",
-        }}
-      >
-        <Button
-          onClick={onClickImage}
-          type="primary"
-          icon={<UploadOutlined />}
-          shape="round"
-        >
-          파일 등록
-        </Button>
-        <Button onClick={onClickSubmit}>저장하기</Button>
-      </div>
-    </>
+      {/* Use label to trigger the hidden file input */}
+      <label htmlFor="fileInput" style={{ display: "none" }}>
+        <input
+          src={imageUrl ? `https://storage.googleapis.com/${imageUrl}` : ""}
+          style={{
+            width: "50px",
+            height: "50px",
+            margin: "20px 0",
+          }}
+        />
+      </label>
+      <input
+        type="file"
+        id="fileInput"
+        onChange={onChangeImage}
+        style={{ display: "none" }}
+        ref={imageRef} // Connect the input element to the ref
+      />
+      <UploadOutlined onClick={onClickImage} rev={undefined} />
+      <Button onClick={onClickSubmit}>저장하기</Button>
+    </div>
   );
 }
