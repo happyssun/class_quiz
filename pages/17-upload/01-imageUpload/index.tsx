@@ -10,7 +10,7 @@ import {
 import { useRouter } from "next/router";
 
 const CREATE_BOARD = gql`
-  mutation createBoard($createboardInput: CreateBoardInput!) {
+  mutation createBoard($createBoardInput: CreateBoardInput!) {
     createBoard(createBoardInput: $createBoardInput) {
       _id
       writer
@@ -45,7 +45,7 @@ export default function ImageUpload() {
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const router = useRouter;
+  const router = useRouter();
 
   const imageRef = useRef<HTMLInputElement>(null);
 
@@ -65,6 +65,8 @@ export default function ImageUpload() {
   const onChangeImage = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
+    if (!file) return; // 파일이 선택되지 않았을 경우 아무 작업도 하지 않음
+
     try {
       const result = await uploadFile({
         variables: {
@@ -72,7 +74,8 @@ export default function ImageUpload() {
         },
       });
       setImageUrl(result.data?.uploadFile.url ?? "");
-    } catch {
+      alert("이미지가 업로드 되었습니다.");
+    } catch (error) {
       Modal.error({ content: error.message });
     }
   };
@@ -91,13 +94,14 @@ export default function ImageUpload() {
             },
           },
         });
-        alert(result.data.createBoard.message);
-        alert("저장되었습니다!");
-        router.push("/");
+        console.log(result.errors);
+        alert("게시물이 저장되었습니다!"); // result.data.createBoard를 제거하고 메시지 수정
       } catch (error) {
-        if (error instanceof Error) Modal.error({ content: error.message });
+        Modal.error({ content: error.message });
       }
     }
+
+    router.push("/");
   };
 
   const onClickImage = () => {
@@ -122,7 +126,7 @@ export default function ImageUpload() {
       />
       {imageUrl && (
         <Image
-          src={imageUrl ? `https://storage.googleapis.com/${imageUrl}` : ""}
+          src={`https://storage.googleapis.com/${imageUrl}`}
           style={{
             width: "50px",
             height: "50px",
