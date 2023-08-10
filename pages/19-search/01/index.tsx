@@ -1,14 +1,30 @@
-import { useQuery, gql } from "@apollo/client";
-import { Table, Input, Button, Pagination } from "antd";
+import { gql, useQuery } from "@apollo/client";
+import { MouseEvent, useState } from "react";
 
-import { useState } from "react";
-import { ColumnsType } from "antd/es/table";
-import type { ChangeEvent } from "react";
 import {
   Query,
   QueryFetchBoardsArgs,
 } from "../../../src/commons/types/generated/types";
 import styled from "@emotion/styled";
+import _ from "lodash";
+import { v4 as uuidv4 } from "uuid";
+
+const Row = styled.div`
+  display: flex;
+`;
+
+const Column = styled.div`
+  width: 25%;
+`;
+
+const Page = styled.span`
+  cursor: pointer;
+  font-size: 18px;
+`;
+const Box = styled.div`
+  border: 2px solid blue;
+  margin: 50px 0;
+`;
 
 const FETCH_BOARDS = gql`
   query fetchBoards($page: Int, $search: String) {
@@ -21,67 +37,97 @@ const FETCH_BOARDS = gql`
   }
 `;
 
-export default function SearchWithAntDesign() {
+export default function SearchPage() {
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [keyword, setKeyword] = useState("");
 
   const { data, refetch } = useQuery<
     Pick<Query, "fetchBoards">,
     QueryFetchBoardsArgs
-  >(FETCH_BOARDS, {
-    variables: { page: currentPage, search },
-  });
+  >(FETCH_BOARDS);
 
-  const onChangeSearch = (e: ChangeEvent<HTMLInputElement>): void => {
+  const onChangeSearchWithBtn = (e) => {
     setSearch(e.currentTarget.value);
   };
 
-  const onClickSearch = (): void => {
-    setCurrentPage(1);
+  const onClickSearch = () => {
     refetch({ search, page: 1 });
   };
 
-  const onClickPage = (page): void => {
-    setCurrentPage(page);
-    refetch({ page, search });
+  const onClickPage = (e: MouseEvent<HTMLSpanElement>): void => {
+    void refetch({ page: Number(e.currentTarget.id) });
   };
 
-  const columns: ColumnsType = [
-    {
-      title: "Writer",
-      dataIndex: "writer",
-      key: "writer",
-    },
-    {
-      title: "Contents",
-      dataIndex: "contents",
-      key: "contents",
-    },
-  ];
+  const getDebounce = _.debounce((value) => {
+    refetch({
+      search: value,
+      page: 1,
+    });
+    setKeyword(value);
+  }, 500);
+
+  const onChangeSearchNoBtn = (e) => {
+    getDebounce(e.currentTarget.value);
+  };
+
+  // 키워드 양옆으로 붙여서 키워드 글자만 따로 분리
+  const SECRET = "#$%";
 
   return (
     <>
-      검색어입력: <Input type="text" onChange={onChangeSearch} />
-      <Button onClick={onClickSearch}>검색하기</Button>
-      <Table
-        columns={columns}
-        dataSource={data?.fetchBoards || []}
-        rowKey="_id"
-        // pagination={false} // Disable built-in pagination
-        size="small"
-      />
+      <Box>
+        <div style={{ margin: "10px 0" }}>1. 검색버튼으로 검색하기 :</div>
+        <input
+          type="text"
+          placeholder="검색어 입력"
+          onChange={onChangeSearchWithBtn}
+        />
+        <button onClick={onClickSearch}>검색하기</button>
+        {data?.fetchBoards.map((el) => (
+          <Row key={el._id}>
+            <Column>
+              {el.writer
+                .replaceAll(keyword, `${SECRET}${keyword}${SECRET}`)
+                .split(SECRET)
+                .map((el) => (
+                  <span
+                    style={{ color: el === keyword ? "red" : "black" }}
+                    key={uuidv4()}
+                  >
+                    {el}
+                  </span>
+                ))}
+            </Column>
+            <Column>{el.title}</Column>
+            <div style={{ width: "50%" }}>{el.contents}</div>
+          </Row>
+        ))}
+        <br />
+        {new Array(10).fill(0).map((_, index) => (
+          <span key={index + 1} id={String(index + 1)} onClick={onClickPage}>
+            {" "}
+            {index + 1}
+          </span>
+        ))}
+      </Box>
+
+      <Box>
+        <div style={{ margin: "10px 0" }}>
+          2. 검색버튼 없이 검색하기 : 디바운싱
+        </div>
+        <input
+          type="text"
+          placeholder="검색어 입력"
+          onChange={onChangeSearchNoBtn}
+        />
+        {data?.fetchBoards.map((el) => (
+          <Row key={el._id}>
+            <Column>{el.writer}</Column>
+            <Column>{el.title}</Column>
+            <div style={{ width: "50%" }}>{el.contents}</div>
+          </Row>
+        ))}
+      </Box>
     </>
   );
 }
-
-// antd 디자인을 이용한 현재 페이지와
-// class의 20-01-search 페이지 내용 비교해보기
-
-/*  기존 페이지 네이션 부분
-{new Array(10).fill(1).map((_, index) => (
-  <span key={index + 1} id={String(index + 1)} onClick={onClickPage}>
-    {""}
-    {index + 1}
-  </span>
-))}
-*/
