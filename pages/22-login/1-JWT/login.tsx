@@ -6,10 +6,11 @@ import {
   Mutation,
   MutationLoginUserArgs,
 } from "../../../src/commons/types/generated/types";
+import { useRouter } from "next/router";
 
 const LOGIN_USER = gql`
-  loginUser($password:String!, $email:String!){
-    loginUser(password:$password, email:$email) {
+  mutation loginUser($password: String!, $email: String!) {
+    loginUser(password: $password, email: $email) {
       accessToken
     }
   }
@@ -24,6 +25,7 @@ export default function LoginJMTPage() {
   >(LOGIN_USER);
 
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const router = useRouter();
 
   const onChangeEmail = (e: ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.currentTarget.value);
@@ -44,11 +46,13 @@ export default function LoginJMTPage() {
 
       const accessToken = result.data?.loginUser.accessToken;
 
-      if (accessToken === undefined) {
-        alert("로그인 실패! 다시 시도하세요.");
+      if (!accessToken) {
+        alert("로그인을 먼저 해주세요.");
+        router.push("/22-login/1-JWT//login");
         return;
       }
       setAccessToken(accessToken);
+      void router.push("/22-login/1-JWT/login-success");
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);
