@@ -24,7 +24,7 @@ export default function LoginJMTPage() {
     MutationLoginUserArgs
   >(LOGIN_USER);
 
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const [, setAccessToken] = useRecoilState(accessTokenState);
   const router = useRouter();
 
   const onChangeEmail = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -47,11 +47,13 @@ export default function LoginJMTPage() {
       const accessToken = result.data?.loginUser.accessToken;
 
       if (!accessToken) {
-        alert("로그인을 먼저 해주세요.");
-        router.push("/22-login/1-JWT//login");
+        alert("로그인 실패! 다시 시도하세요!");
         return;
       }
       setAccessToken(accessToken);
+
+      localStorage.setItem("accessToken", accessToken); // 임시사용
+
       void router.push("/22-login/1-JWT/login-success");
     } catch (error) {
       if (error instanceof Error) {
