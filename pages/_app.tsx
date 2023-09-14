@@ -4,8 +4,10 @@ import { Global } from "@emotion/react";
 
 import { globalStyles } from "../src/components/commons/styles/globalStyles";
 import { RecoilRoot } from "recoil";
-import { createContext } from "vm";
-import { Dispatch, SetStateAction } from "react";
+
+import { Dispatch, SetStateAction, createContext, useState } from "react";
+import { AppProps } from "next/app";
+import withApollo from "../src/components/commons/hocks/withApollo";
 
 interface IGlobalContext {
   accessToken?: string;
@@ -13,16 +15,20 @@ interface IGlobalContext {
 }
 
 export const GlobalContext = createContext<IGlobalContext>({});
-export default function App({ Component }) {
+function App({ Component, pageProps }: AppProps) {
+  const [accessToken, setAccessToken] = useState("");
+
   return (
     <RecoilRoot>
-      <ApolloSetting>
+      <GlobalContext.Provider value={{ accessToken, setAccessToken }}>
         <>
           <Global styles={globalStyles} />
 
-          <Component />
+          <Component {...pageProps} />
         </>
-      </ApolloSetting>
+      </GlobalContext.Provider>
     </RecoilRoot>
   );
 }
+
+export default withApollo(App);
