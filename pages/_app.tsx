@@ -3,7 +3,6 @@ import ApolloSetting from "../src/components/commons/apollo";
 import { Global } from "@emotion/react";
 
 import { globalStyles } from "../src/components/commons/styles/globalStyles";
-import { RecoilRoot } from "recoil";
 
 import { Dispatch, SetStateAction, createContext, useState } from "react";
 import { AppProps } from "next/app";
@@ -19,15 +18,13 @@ function App({ Component, pageProps }: AppProps) {
   const [accessToken, setAccessToken] = useState("");
 
   return (
-    <RecoilRoot>
-      <GlobalContext.Provider value={{ accessToken, setAccessToken }}>
-        <>
-          <Global styles={globalStyles} />
+    <GlobalContext.Provider value={{ accessToken, setAccessToken }}>
+      <>
+        <Global styles={globalStyles} />
 
-          <Component {...pageProps} />
-        </>
-      </GlobalContext.Provider>
-    </RecoilRoot>
+        <Component {...pageProps} />
+      </>
+    </GlobalContext.Provider>
   );
 }
 
