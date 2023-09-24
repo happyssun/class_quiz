@@ -1,5 +1,7 @@
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { userSchema } from "./validation-with-yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 interface IInputs {
   writer: string;
@@ -8,12 +10,15 @@ interface IInputs {
   contents: string;
 }
 
-export default function ReactHookFormPage(): JSX.Element {
+export default function ReactHookFormYupPage(): JSX.Element {
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<IInputs>();
+  } = useForm<IInputs>({
+    resolver: yupResolver(userSchema),
+    mode: "onChange",
+  });
   const onSubmit: SubmitHandler<IInputs> = (data) => {
     console.log(data);
   };
@@ -25,14 +30,15 @@ export default function ReactHookFormPage(): JSX.Element {
         type="text"
         {...register("writer", {
           required: "작성자를 입력하세요.",
-          maxLength: { value: 20, message: "최대 20자까지 입력 가능합니다." },
         })}
       />
       <div>{errors.writer && <span>{errors.writer.message}</span>}</div>
       비밀번호 :{" "}
       <input
         type="password"
-        {...register("password", { required: "비밀번호를 입력하세요." })}
+        {...register("password", {
+          required: "비밀번호를 입력하세요.",
+        })}
       />
       <div>{errors.password && <span>{errors.password.message}</span>}</div>
       제목 :{" "}
