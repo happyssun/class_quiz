@@ -9,14 +9,16 @@ const MyButton = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-export function Button01(props) {
+export function Button01({ isValid, error, children }) {
   const theme = useTheme();
+  console.log("isValid prop:", isValid);
   return (
     <MyButton
       variant="contained"
-      disabled={!props.isValid} // isValid가 false일 때 버튼을 비활성화
+      disabled={!isValid || !!error} // isValid가 false일 때 버튼을 비활성화
+      type="submit"
     >
-      등록하기
+      {children}
     </MyButton>
   );
 }
