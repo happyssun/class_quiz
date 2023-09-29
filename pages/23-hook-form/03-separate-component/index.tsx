@@ -55,7 +55,11 @@ export default function ReactHookFormYupPage(): JSX.Element {
           error={errors.contents}
         />
 
-        <Button type="submit" variant="contained">
+        <Button
+          type="submit"
+          variant="contained"
+          style={{ backgroundColor: "#ed799e" }}
+        >
           등록하기
         </Button>
       </Stack>
