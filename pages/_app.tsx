@@ -6,7 +6,7 @@ import { globalStyles } from "../src/components/commons/styles/globalStyles";
 
 import { Dispatch, SetStateAction, createContext, useState } from "react";
 import { AppProps } from "next/app";
-import withApollo from "../src/components/commons/hocks/withApollo";
+import withApollo from "../src/components/commons/hooks/withApollo";
 
 interface IGlobalContext {
   accessToken?: string;
