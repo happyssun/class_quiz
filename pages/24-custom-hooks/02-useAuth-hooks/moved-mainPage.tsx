@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { Query } from "../../../src/commons/types/generated/types";
+import { useAuth } from "../../../src/components/commons/hooks/useAuth";
 
 const FETCH_USER_LOGGED_IN = gql`
   query {
@@ -11,6 +12,7 @@ const FETCH_USER_LOGGED_IN = gql`
 `;
 
 export default function MovedToMainPage() {
+  useAuth();
   const { data } =
     useQuery<Pick<Query, "fetchUserLoggedIn">>(FETCH_USER_LOGGED_IN);
   return (

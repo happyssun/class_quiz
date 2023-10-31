@@ -4,7 +4,10 @@ import { useEffect } from "react";
 export const useAuth = () => {
   const router = useRouter();
 
-  useEffect(()=> {
-if(localStorage.getItem("accessToken")===null)
-  },[])
-}
+  useEffect(() => {
+    const acessToken = localStorage.getItem("accessToken");
+    if (!acessToken) {
+      router.push("/24-custom-hooks/02-useAuth-hooks/login-page.tsx");
+    }
+  }, [router]);
+};
