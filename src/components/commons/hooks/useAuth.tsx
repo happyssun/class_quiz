@@ -7,7 +7,7 @@ export const useAuth = () => {
   useEffect(() => {
     const acessToken = localStorage.getItem("accessToken");
     if (!acessToken) {
-      router.push("/24-custom-hooks/02-useAuth-hooks/login-page.tsx");
+      router.push("/24-custom-hooks/02-useAuth-hooks/login-page");
     }
   }, [router]);
 };

@@ -39,7 +39,7 @@ export default function LoginPage() {
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken); // Store access token in local storage
         setAccessToken(accessToken);
-        router.push("/24-custom-hooks/02-useAuth-hooks/moved-mainPage.tsx"); // Redirect to main page after successful login
+        router.push("/24-custom-hooks/02-useAuth-hooks/moved-mainPage"); // Redirect to main page after successful login
       }
     } catch (error) {
       if (error instanceof Error) {
