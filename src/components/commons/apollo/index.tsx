@@ -21,7 +21,7 @@ export default function ApolloSetting(props: IApolloSettingProps) {
   const uploadLink = createUploadLink({
     uri: "http://backend-practice.codebootcamp.co.kr/graphql",
 
-     // 모든 페이지에 acessToken을 전달하기 위해
+    // 모든 페이지에 acessToken을 전달하기 위해
     headers: {
       Authorization: `Bearer ${accessToken}`, //
     },

@@ -7,7 +7,8 @@ export const useAuth = () => {
   useEffect(() => {
     const acessToken = localStorage.getItem("accessToken");
     if (!acessToken) {
-      router.push("/24-custom-hooks/02-useAuth-hooks/login-page");
+      alert("로그인 후 이용 가능");
+      void router.push("/24-custom-hooks/02-useAuth-hooks/login-page");
     }
   }, [router]);
 };
