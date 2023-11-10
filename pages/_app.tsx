@@ -9,15 +9,14 @@ import { AppProps } from "next/app";
 import withApollo from "../src/components/commons/hooks/withApollo";
 import { RecoilRoot } from "recoil";
 
-interface IGlobalContext {
-  accessToken?: string;
-  setAccessToken?: Dispatch<SetStateAction<string>>;
-}
+// interface IGlobalContext {
+//   accessToken?: string;
+//   setAccessToken?: Dispatch<SetStateAction<string>>;
+// }
 
-export const GlobalContext = createContext<IGlobalContext>({});
+// export const GlobalContext = createContext<IGlobalContext>({});
+
 function App({ Component, pageProps }: AppProps) {
-  // const [accessToken, setAccessToken] = useState("");
-
   return (
     <RecoilRoot>
       {/* <GlobalContext.Provider value={{ accessToken, setAccessToken }}> */}
@@ -33,7 +32,9 @@ function App({ Component, pageProps }: AppProps) {
   );
 }
 
-export default withApollo(App);
+export default App;
+// export default withApollo(App);
+// - 이 부분이 들어가면 개발자툴에서 apollo - cache에 자료가 안보인다 이유는 확인해보자!
 
 /* 
 GlobalContext.Provider는 React의 Context API를 사용하여 전역 상태를 관리하기 위한 컨테이너 역할을 하는 것입니다.

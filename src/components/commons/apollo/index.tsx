@@ -7,6 +7,7 @@ import {
 import { createUploadLink } from "apollo-upload-client";
 import { useRecoilState } from "recoil";
 import { accessTokenState } from "../../../commons/stores";
+import { useEffect } from "react";
 
 interface IApolloSettingProps {
   children: JSX.Element;
@@ -16,7 +17,16 @@ interface IApolloSettingProps {
 const GLOBAL_STATE = new InMemoryCache();
 
 export default function ApolloSetting(props: IApolloSettingProps) {
-  const [accessToken] = useRecoilState(accessTokenState);
+  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+
+  useEffect(() => {
+    const result = localStorage.getItem("accessToken");
+    console.log(result);
+
+    // 로컬스토리지에 저장한 accessToken을 가져오는데 값이 만약에 없다면 ""(빈문자열)
+    // setState에 저장되는것은 다 문자열로 바뀌어 저장됨
+    setAccessToken(result ?? "");
+  }, []);
 
   const uploadLink = createUploadLink({
     uri: "http://backend-practice.codebootcamp.co.kr/graphql",
@@ -30,6 +40,7 @@ export default function ApolloSetting(props: IApolloSettingProps) {
   const client = new ApolloClient({
     link: ApolloLink.from([uploadLink as unknown as ApolloLink]),
     cache: GLOBAL_STATE,
+    // cache: new InMemoryCache(), - 이부분을 따로 빼서 저장 - apollo-cache를 그쪽에 저장
   });
 
   return (
