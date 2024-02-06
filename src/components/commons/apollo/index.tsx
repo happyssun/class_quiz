@@ -6,7 +6,7 @@ import {
 } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { useRecoilState } from "recoil";
-import { accessTokenState } from "../../../commons/stores";
+import { quizAccessTokenState } from "../../../commons/stores";
 import { useEffect } from "react";
 
 interface IApolloSettingProps {
@@ -17,7 +17,7 @@ interface IApolloSettingProps {
 const GLOBAL_STATE = new InMemoryCache();
 
 export default function ApolloSetting(props: IApolloSettingProps) {
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const [accessToken, setAccessToken] = useRecoilState(quizAccessTokenState);
 
   useEffect(() => {
     const result = localStorage.getItem("accessToken");

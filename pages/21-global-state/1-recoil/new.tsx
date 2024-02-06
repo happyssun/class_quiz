@@ -1,10 +1,10 @@
 import { useRecoilState } from "recoil";
-import { isEditState } from "../../../src/commons/stores";
+import { quizIsEditState } from "../../../src/commons/stores";
 import RecoilEditPage from "./edit";
 import { useEffect } from "react";
 
 export default function RecoilNewPage() {
-  const [, setIsEdit] = useRecoilState(isEditState);
+  const [, setIsEdit] = useRecoilState(quizIsEditState);
 
   useEffect(() => {
     setIsEdit(false);
